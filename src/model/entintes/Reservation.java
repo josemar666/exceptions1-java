@@ -5,6 +5,7 @@
  */
 package model.entintes;
 
+import exceptions.entintes.DomainException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +21,10 @@ public class Reservation {
         
     }
 
-    public Reservation(Integer rooNumber, Date checkin, Date checkout) {
+    public Reservation(Integer rooNumber, Date checkin, Date checkout)  {
+         if(!checkout.after(checkin)){
+               throw new DomainException ("check - out must  be after  check in date !");
+              }
         this.rooNumber = rooNumber;
         this.checkin = checkin;
         this.checkout = checkout;
@@ -47,17 +51,17 @@ public class Reservation {
          long diff = checkout.getTime() - checkin.getTime();
          return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
     }
-   public String upDate(Date checkin , Date checkout){
+   public void upDate(Date checkin , Date checkout){
                Date now = new Date();
               if(checkin.before(now) || checkout.before(now)){
-              return " Reservation dates of updates  must be future !";
+              throw new DomainException( " Reservation dates of updates  must be future !");
               }
               if(!checkout.after(checkin)){
-               return "check - out must  be after  check in date !";
+               throw new DomainException ("check - out must  be after  check in date !");
               }
               this.checkin = checkin;
               this.checkout = checkout;
-              return null;
+              
    }
 
    @Override
